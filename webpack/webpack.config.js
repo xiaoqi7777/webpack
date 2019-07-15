@@ -1,6 +1,9 @@
 let path = require('path')
 let HtmlWebapckPlugins = require('html-webpack-plugin')
 let MiniCssExtractPlugin = require('mini-css-extract-plugin')
+let {CleanWebpackPlugin} =  require('clean-webpack-plugin')
+let OptimizeCss = require('optimize-css-assets-webpack-plugin')
+
 module.exports = {
   mode:'production',
   entry:{
@@ -18,9 +21,42 @@ module.exports = {
           {
             loader:MiniCssExtractPlugin.loader
           },
-          'css-loader'
+          'css-loader',
         ]
-      }
+      },
+      {
+        test:/\.scss$/,
+        use:[
+          {
+            loader:MiniCssExtractPlugin.loader
+          },
+          'css-loader',
+          'sass-loader'
+        ]
+      },
+      {
+        test:/\.(png|jpeg|gif)$/,
+        use:[
+          {
+            loader:'url-loader',
+            options:{
+              limit:1*1024,
+              outputPath:'img'
+            }
+          }
+        ]
+      },
+      // {
+      //   test:/\.js$/,
+      //   use:[
+      //     {
+      //       loader:'babel-loader',
+      //       options:{
+      //         presets:['@babel/preset-env']
+      //       }
+      //     }
+      //   ]
+      // }
     ]
   },
   plugins:[
@@ -29,8 +65,10 @@ module.exports = {
       filename:'index.html'
     }),
     new MiniCssExtractPlugin({
-      filename:path.join(__dirname,'../public/css/main.css')
-    })
+      filename:'css/main.css',
+    }),
+    new OptimizeCss(),
+    new CleanWebpackPlugin()
   ],
   devServer:{
     contentBase:path.join(__dirname,'../public'),

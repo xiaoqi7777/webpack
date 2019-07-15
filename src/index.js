@@ -1,7 +1,8 @@
 // import './index.scss'
-// import './reset.scss'
+import './reset.scss'
 import './index.css'
-import './1.js'
+import {a} from './1.js'
+console.log('a',a)
 // import $ from 'jquery';
 // import $ from 'jquery'
 // // import vue from 'vue'
