@@ -70,7 +70,7 @@
   - $$ `Compiler:afterSeal`  seal之后	
 
 - 流程图
-<img :src="$withBase('/webpackcode.jpg')" >
+<img src="('./webpackcode.jpg')" >
 
 ## plugin 插件 
 - webpack内部通过`tapable`申明的
