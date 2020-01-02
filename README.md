@@ -1,8 +1,9 @@
 # 手写webpack
+[[toc]]
+
 - 安装库 
 - cnpm i -D tapable mkdirp ejs babylon babel-types babel-generator babel-traverse
 
-[[toc]]
 
 ## webpack工作流程
 - $$=>表示发射事件
@@ -70,7 +71,7 @@
   - $$ `Compiler:afterSeal`  seal之后	
 
 - 流程图
-<img :src="$withBase('./img/webpackcode.jpg')" >
+<img :src="$withBase('img/webpackcode.jpg')" >
 
 ## plugin 插件 
 - webpack内部通过`tapable`申明的
