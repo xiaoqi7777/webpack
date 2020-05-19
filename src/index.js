@@ -1,10 +1,15 @@
-
-let button = document.createElement('button');
-button.innerHTML = '异步加载额外的模块'
-button.onclick = function(){
-  // 魔法注释
-  import(/* webpackChunkName:'index1' */'./title.js').then(rs=>{
-    console.log(rs.default)
-  })
+import './client.js';
+import './world';
+console.log('123')
+var root = document.getElementById('root');
+function render(){
+    let title = require('./title').default;
+    root.innerHTML = title;
 }
-document.body.appendChild(button)
+render();
+//如果说此模块支持热更新的话
+if(module.hot){
+  //如果此模块依赖的title模块发生变更的时候，就会调用render回调函数  
+   module.hot.accept(['./title'],render);
+}
+//hot._acceptedDependencies={'./title',render}

@@ -68,9 +68,13 @@
     "bootstrap": "^4.3.1",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.0.0",
+    "express": "^4.17.1",
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
+    "memory-fs": "^0.5.0",
+    "mime": "^2.4.5",
     "moment": "^2.24.0",
+    "socket.io": "^2.3.0",
     "style-loader": "^0.23.1"
   }
 }
