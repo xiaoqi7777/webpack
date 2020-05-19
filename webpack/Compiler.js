@@ -44,7 +44,6 @@ class Compiler extends Tapable{
         let source = assets[file];
         // posix 能在不同操作系统上分隔符一致
         let targetPath = path.posix.join(this.options.output.path,file);
-        console.log('targetPath',targetPath)
         this.outputFileSystem.writeFileSync(targetPath,source);
       }
       callback();
@@ -74,9 +73,8 @@ class Compiler extends Tapable{
     this.hooks.beforeCompile.callAsync({},err=>{
       this.hooks.compile.call();
       // 创建一个新的compilation 这里面放着本次编译的结果
-      const compilation = this.newCompilation();
+      const compilation = this.newCompilation()
       this.hooks.make.callAsync(compilation,err=>{
-        // console.log('make完成')
         compilation.seal(err=>{// 通过模块依赖 生成代码块
           this.hooks.afterCompile.callAsync(compilation,err=>{
             return onCompiled(null,compilation);//写入文件系统

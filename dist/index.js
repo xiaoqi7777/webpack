@@ -74,16 +74,22 @@
     module.l = true;
     return module.exports;
   }
-  return __webpack_require__(__webpack_require__.s = "<%-entryId%>");
+  return __webpack_require__(__webpack_require__.s = "./src/index.js");
 })
   ({
-      <%
-        for(let id in modules){
-            let {moduleId,_source} = modules[id];%>
-            "<%-moduleId%>":
+      
+            "./src/index.js":
             (function (module, exports,__webpack_require__) {
-              <%-_source%>
+              
+let button = document.createElement('button');
+button.innerHTML = '异步加载额外的模块';
+button.onclick = function () {
+  // 魔法注释
+  __webpack_require__.e("src_title_js").then(__webpack_require__.t.bind(__webpack_require__, "./src/title.js", 7)).then(rs => {
+    console.log(rs.default);
+  });
+};
+document.body.appendChild(button);
             }),
-         <%}
-      %>
+         
   });

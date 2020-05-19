@@ -4,6 +4,7 @@ class Chunk{
     this.name = module.name;
     this.modules = [];
     this.files = [];
+    this.main = module.main
   }
 }
 module.exports = Chunk

@@ -1,6 +1,5 @@
 (function (modules) {
   var installedModules = {};
-
    
   function webpackJsonpCallback(data){
     let chunkIds = data[0];//['title']
@@ -9,28 +8,31 @@
     let resolves = []
     for(let i=0;i<chunkIds.length;i++){
       chunkId = chunkIds[i];
+      console.log('installedChunks[chunkId]',installedChunks[chunkId])
       resolves.push(installedChunks[chunkId][0]);
       installedChunks[chunkId] = 0;
     }
     for(let moduleId in moreModules){
+      console.log('moduleId',moduleId)
       modules[moduleId] = moreModules[moduleId];
     }
     while(resolves.length){
+      console.log('watch')
       resolves.shift()();
     }
   }
-  
  
   var jsonArray = window["webpackJsonp"] = window["webpackJsonp"] ||[];
   jsonArray.push = webpackJsonpCallback;
+ //  undefined 未加载  null 准备加载 promise 加载中 0加载完成
  var installedChunks = {
-   main:0
+   main:0// 默认情况 我这个文件只包含入口代码块main 0
  }
 
   __webpack_require__.e = function(chunkId){
    let promises = [];
    var installedChunkData = installedChunks[chunkId];// 先从缓存里取得当前代码块加载的状态
-   if(installedChunkData != 0 ){ 
+   if(installedChunkData != 0 ){ // 表示未加载,需要立即加载
      var promise = new Promise(function(resolve,reject){
        installedChunkData = installedChunks[chunkId] = [resolve,reject];
      })
@@ -39,7 +41,6 @@
      let script = document.createElement('script');
      script.src = chunkId + '.js';
      document.head.appendChild(script);
-
    }
    return Promise.all(promises)
   }
@@ -74,16 +75,23 @@
     module.l = true;
     return module.exports;
   }
-  return __webpack_require__(__webpack_require__.s = "<%-entryId%>");
+  return __webpack_require__(__webpack_require__.s = "./src/index.js");
 })
   ({
-      <%
-        for(let id in modules){
-            let {moduleId,_source} = modules[id];%>
-            "<%-moduleId%>":
+            "./src/index.js":
             (function (module, exports,__webpack_require__) {
-              <%-_source%>
+              
+
+let button = document.createElement('button');
+button.innerHTML = '异步加载额外的模块';
+button.onclick = function () {
+  __webpack_require__.e("src_title_js").then(__webpack_require__.t.bind(__webpack_require__, "./src/title.js", 7)).then(rs => {
+    console.log(rs.default);
+  });
+};
+document.body.appendChild(button);
+
+module.exports = 'index';
             }),
-         <%}
-      %>
+         
   });

@@ -14,13 +14,16 @@
     module.l = true;
     return module.exports;
   }
-  return __webpack_require__(__webpack_require__.s = "./src/index.js");
+  return __webpack_require__(__webpack_require__.s = "<%-entryId%>");
 })
   ({
-      
-            "./src/index.js":
+      <%
+        for(let id in modules){
+            let {moduleId,_source} = modules[id];%>
+            "<%-moduleId%>":
             (function (module, exports,__webpack_require__) {
-              console.log('123');
+              <%-_source%>
             }),
-         
+         <%}
+      %>
   });

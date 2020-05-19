@@ -1,5 +1,4 @@
 const fs = require('fs');
-const ejs = require('ejs');
 const path = require('path');
 const babylon = require('babylon');
 const t = require('babel-types');
@@ -11,7 +10,7 @@ class NormalModule {
     this.context = context;
     this.request = request;
     this.dependencies = [];
-    this.moduleId;
+    this.moduleId;// 代码的相对路径
     this._ast;
     this._source;
   }
@@ -40,7 +39,10 @@ class NormalModule {
   }
   build(compilation) {
     let originalSource = this.getSource(this.request,compilation)
-    const ast = babylon.parse(originalSource);
+    // 处理import() 语法 要加插件 dynamicImport
+    const ast = babylon.parse(originalSource,{
+      plugins:['dynamicImport']
+    });
     let dependencies = [];
     traverse(ast, {
       CallExpression: (nodePath) => {
@@ -60,6 +62,21 @@ class NormalModule {
           dependencies.push({ name: this.name, context: this.context, request: dependencyRequest });
           //修改加载的模块ID名称
           node.arguments = [t.stringLiteral(dependencyModuleId)];
+          // t.isImport 判断类型
+        }else if(t.isImport(nodePath.node.callee)){
+          let node = nodePath.node;
+          let moduleName = node.arguments[0].value; // 异步加载的模块名字
+          let extension = moduleName.split(path.posix.sep).pop().indexOf('.') == -1 ? '.js' : '';
+          let dependencyRequest = path.posix.join(path.posix.dirname(this.request), moduleName + extension);
+          let dependencyModuleId = './' + path.posix.relative(this.context, dependencyRequest);
+          
+          // 此模块依赖的代码也会放在分割出去的代码块中
+          let dependencyChunkId = dependencyModuleId.slice(2).replace(/(\/|\.)/g,'_')
+          // 整个节点替换
+          nodePath.replaceWithSourceString(` 
+            __webpack_require__.e("${dependencyChunkId}").then(__webpack_require__.t.bind(__webpack_require__,"${dependencyModuleId}",7))
+          `) 
+          compilation._addModuleChain(this.context,dependencyModuleId, dependencyChunkId,dependencyChunkId);
         }
       }
     });
